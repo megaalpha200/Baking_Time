@@ -1,0 +1,24 @@
+<resources>
+    <string name="app_name">Baking Time!</string>
+    <string name="recipe_url">https://d17h27t6h515a5.cloudfront.net/topher/2017/May/59121517_baking/baking.json</string>
+
+    <!--Placeholder Strings-->
+    <string name="recipe_name_placeholder">Recipe</string>
+    <string name="step_name_placeholder">Step</string>
+
+    <string name="no_network_connection_str">No network connection!</string>
+
+    <!--Intent Bundle Keys-->
+    <string name="recipe_key" translatable="false">recipe_data</string>
+    <string name="recipe_steps_key" translatable="false">recipe_steps_data</string>
+    <string name="step_index_key" translatable="false">recipe_step_index</string>
+    <string name="step_highlighted_index_key" translatable="false">step_highlighted_index</string>
+    <string name="widget_setup_mode_key" translatable="false">is_widget_setup_mode</string>
+
+    <!--Strings for Views-->
+    <string name="step_details_prev_btn_text">Previous</string>
+    <string name="step_details_next_btn_text">Next</string>
+    <string name="random_text">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Risus nullam eget felis eget nunc lobortis mattis aliquam. Orci phasellus egestas tellus rutrum tellus.</string>
+    <string name="appwidget_recipe_name">RECIPE</string>
+    <string name="add_widget">Add widget</string>
+</resources>
