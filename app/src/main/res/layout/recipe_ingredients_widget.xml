@@ -1,28 +1,43 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/appwidget_recipe_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFF"
-    android:padding="@dimen/widget_margin">
+    android:background="@drawable/widget_background"
+    android:padding="@dimen/widget_margin"
+    android:orientation="vertical"
+    android:gravity="center_horizontal">
 
     <TextView
         android:id="@+id/appwidget_recipe_name_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
+        android:gravity="center_vertical"
         android:layout_margin="8dp"
         android:text="@string/appwidget_recipe_name"
-        android:textColor="#000000"
+        android:textColor="#FFF"
         android:textSize="24sp"
         android:textStyle="bold|italic" />
 
-    <TextView
-        android:id="@+id/appwidget_recipe_ingredients_text_view"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/random_text"
-        android:layout_below="@id/appwidget_recipe_name_text_view"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"/>
+        android:layout_height="match_parent">
 
-</RelativeLayout>
+        <ListView
+            android:id="@+id/appwidget_ingredients_list_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp" />
+
+        <TextView
+            android:id="@+id/appwidget_empty_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="@string/widget_empty_list_view_text"
+            android:gravity="center"
+            android:textSize="20sp"
+            android:textColor="#FFF"
+            android:textStyle="bold"/>
+    </FrameLayout>
+
+</LinearLayout>

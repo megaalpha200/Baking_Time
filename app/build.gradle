@@ -63,4 +63,8 @@ dependencies {
 
     //ExoPlayer Dependency
     implementation 'com.google.android.exoplayer:exoplayer:r2.2.0'
+
+    //Room Dependencies
+    implementation "android.arch.persistence.room:runtime:1.1.1"
+    annotationProcessor "android.arch.persistence.room:compiler:1.1.1"
 }

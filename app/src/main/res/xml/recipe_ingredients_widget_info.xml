@@ -2,10 +2,10 @@
 <appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
     android:initialKeyguardLayout="@layout/recipe_ingredients_widget"
     android:initialLayout="@layout/recipe_ingredients_widget"
-    android:minHeight="100dp"
-    android:minWidth="300dp"
+    android:minHeight="110dp"
+    android:minWidth="250dp"
     android:configure="com.example.android.bakingtime.RecipeWidgetConfigActivity"
     android:previewImage="@drawable/baking_app2"
     android:resizeMode="horizontal|vertical"
-    android:updatePeriodMillis="0"
+    android:updatePeriodMillis="3600000"
     android:widgetCategory="home_screen" />

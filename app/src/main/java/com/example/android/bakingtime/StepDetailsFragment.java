@@ -70,6 +70,9 @@ public class StepDetailsFragment extends NetworkAwareFragment implements ExoPlay
 
     private OnStepNavigationListener stepNavigationCallback;
 
+    private boolean shouldExoPlayerResume = false;
+    private long lastStoredExoPlayerPos = 0;
+
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_step_details, container, false);
@@ -111,6 +114,8 @@ public class StepDetailsFragment extends NetworkAwareFragment implements ExoPlay
         else {
             mRecipe = savedInstanceState.getParcelable(getString(R.string.recipe_key));
             stepIndex = savedInstanceState.getInt(getString(R.string.step_index_key), 0);
+            shouldExoPlayerResume = savedInstanceState.getBoolean(mContext.getString(R.string.exo_player_playback_key), false);
+            lastStoredExoPlayerPos = savedInstanceState.getLong(mContext.getString(R.string.exo_player_pos_key), 0);
         }
 
         setUpStepInformation();
@@ -150,13 +155,55 @@ public class StepDetailsFragment extends NetworkAwareFragment implements ExoPlay
         super.onSaveInstanceState(outState);
         outState.putParcelable(getString(R.string.recipe_key), mRecipe);
         outState.putInt(getString(R.string.step_index_key), stepIndex);
+
+        if (mExoPlayer != null) {
+            outState.putBoolean(mContext.getString(R.string.exo_player_playback_key), mExoPlayer.getPlayWhenReady());
+            outState.putLong(mContext.getString(R.string.exo_player_pos_key), mExoPlayer.getCurrentPosition());
+        }
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        if (Util.SDK_INT > 23) {
+            setUpExoPlayerView();
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if ((Util.SDK_INT <= 23 || mExoPlayer == null)) {
+            setUpExoPlayerView();
+        }
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        releasePlayer();
         mMediaSession.setActive(false);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        if (mExoPlayer != null) {
+            shouldExoPlayerResume = mExoPlayer.getPlayWhenReady();
+            lastStoredExoPlayerPos = mExoPlayer.getCurrentPosition();
+        }
+
+        if (Util.SDK_INT <= 23) {
+            releasePlayer();
+        }
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (Util.SDK_INT > 23) {
+            releasePlayer();
+        }
     }
 
     public void setUpStepInformation() {
@@ -167,7 +214,7 @@ public class StepDetailsFragment extends NetworkAwareFragment implements ExoPlay
             StepShortDescriptionTitleTextView.setText(currStep.getShortDescription());
 
             if (stepIndex == 0) {
-                StepDescriptionTextView.setText(RecipeUtils.createRecipeListString(mRecipe.getIngredients()));
+                StepDescriptionTextView.setText(RecipeUtils.createRecipeListAsString(mRecipe.getIngredients()));
             }
             else {
                 StepDescriptionTextView.setText(currStep.getDescription());
@@ -268,6 +315,8 @@ public class StepDetailsFragment extends NetworkAwareFragment implements ExoPlay
             ex.printStackTrace();
         }
 
+        shouldExoPlayerResume = false;
+        lastStoredExoPlayerPos = 0;
         releasePlayer();
         this.stepIndex = index;
         setUpStepInformation();
@@ -321,8 +370,10 @@ public class StepDetailsFragment extends NetworkAwareFragment implements ExoPlay
             MediaSource mediaSource = new ExtractorMediaSource(mediaUri, new DefaultDataSourceFactory(
                     mContext, userAgent), new DefaultExtractorsFactory(), null, null);
             mExoPlayer.prepare(mediaSource);
-            mExoPlayer.setPlayWhenReady(true);
         }
+
+        mExoPlayer.seekTo(lastStoredExoPlayerPos);
+        mExoPlayer.setPlayWhenReady(shouldExoPlayerResume);
     }
 
     private void releasePlayer() {

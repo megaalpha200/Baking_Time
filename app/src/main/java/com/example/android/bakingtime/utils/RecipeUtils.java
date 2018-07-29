@@ -11,6 +11,7 @@ import com.android.volley.toolbox.Volley;
 import com.example.android.bakingtime.models.Ingredient;
 import com.example.android.bakingtime.R;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class RecipeUtils {
@@ -28,15 +29,31 @@ public class RecipeUtils {
         queue.add(request);
     }
 
-    public static String createRecipeListString(List<Ingredient> ingredients) {
+    public static String createRecipeListAsString(List<Ingredient> ingredients) {
         StringBuilder ingredientsFormattedString = new StringBuilder();
         ingredientsFormattedString.append("Ingredients:\n");
 
         for (int i = 0; i < ingredients.size(); i++) {
             Ingredient ingredient = ingredients.get(i);
-            ingredientsFormattedString.append("\t\t-" + String.valueOf(ingredient.getQuantity()) + " " + ingredient.getMeasure() + " of " + ingredient.getIngredientName() + "\n");
+            ingredientsFormattedString.append("\t\t-" + createIngredientFormattedString(ingredient) + "\n");
         }
 
         return ingredientsFormattedString.toString();
+    }
+
+    public static String createIngredientFormattedString(Ingredient ingredient) {
+        return String.valueOf(ingredient.getQuantity()) + " " + ingredient.getMeasure() + " of " + ingredient.getIngredientName();
+    }
+
+    public static ArrayList<String> createIngredientFormattedList(List<Ingredient> ingredients) {
+        ArrayList<String> ingredientStrings = new ArrayList<>();
+
+        if (ingredients != null) {
+            for(int i = 0; i < ingredients.size(); i++) {
+                ingredientStrings.add(createIngredientFormattedString(ingredients.get(i)));
+            }
+        }
+
+        return ingredientStrings;
     }
 }

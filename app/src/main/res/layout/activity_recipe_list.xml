@@ -1,7 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<fragment
-    android:id="@+id/recipe_list_fragment"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:name="com.example.android.bakingtime.RecipeListFragment"/>
+    android:layout_height="match_parent">
+    <fragment
+        android:id="@+id/recipe_list_fragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:name="com.example.android.bakingtime.RecipeListFragment"/>
+
+    <!--<android.support.design.widget.FloatingActionButton
+        android:id="@+id/db_test_fab"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_gravity="bottom|end"
+        android:layout_marginEnd="32dp"
+        android:layout_marginBottom="32dp"
+        app:srcCompat="@drawable/ic_storage_white_24dp"/>-->
+</FrameLayout>

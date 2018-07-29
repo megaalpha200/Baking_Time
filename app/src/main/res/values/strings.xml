@@ -14,6 +14,10 @@
     <string name="step_index_key" translatable="false">recipe_step_index</string>
     <string name="step_highlighted_index_key" translatable="false">step_highlighted_index</string>
     <string name="widget_setup_mode_key" translatable="false">is_widget_setup_mode</string>
+    <string name="exo_player_playback_key" translatable="false">should_exo_player_playback_resume</string>
+    <string name="exo_player_pos_key" translatable="false">exo_player_position</string>
+    <string name="widget_ingredients_str_list_key" translatable="false">widget_ingredients_str_list</string>
+
 
     <!--Strings for Views-->
     <string name="step_details_prev_btn_text">Previous</string>
@@ -21,4 +25,5 @@
     <string name="random_text">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Risus nullam eget felis eget nunc lobortis mattis aliquam. Orci phasellus egestas tellus rutrum tellus.</string>
     <string name="appwidget_recipe_name">RECIPE</string>
     <string name="add_widget">Add widget</string>
+    <string name="widget_empty_list_view_text">Empty</string>
 </resources>

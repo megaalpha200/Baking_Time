@@ -1,10 +1,14 @@
 package com.example.android.bakingtime.models;
 
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.Ignore;
+import android.arch.persistence.room.PrimaryKey;
 import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.google.gson.annotations.SerializedName;
 
+@Entity(tableName = "ingredient", primaryKeys = {"id", "recipeId"})
 public class Ingredient implements Parcelable {
 
     private int id;
@@ -20,6 +24,7 @@ public class Ingredient implements Parcelable {
         this.recipeId = recipeId;
     }
 
+    @Ignore
     private Ingredient(Parcel in) {
         quantity = in.readDouble();
         measure = in.readString();

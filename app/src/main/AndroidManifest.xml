@@ -59,6 +59,10 @@
             </intent-filter>
         </activity>
         <activity android:name=".testing.TestActivity" />
+        <activity android:name=".DatabaseTesterActivity" />
+
+        <service android:name=".widget.RecipeWidgetService"
+            android:permission="android.permission.BIND_REMOTEVIEWS"/>
     </application>
 
 </manifest>

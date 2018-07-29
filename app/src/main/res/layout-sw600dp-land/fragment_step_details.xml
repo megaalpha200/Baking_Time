@@ -31,7 +31,9 @@
         android:layout_marginTop="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/step_short_description_title" />
+        app:layout_constraintTop_toBottomOf="@+id/step_short_description_title"
+        app:rewind_increment="2000"
+        app:fastforward_increment="2000" />
 
     <ScrollView
         android:id="@+id/step_description_scroll_view"

@@ -5,6 +5,7 @@ import android.appwidget.AppWidgetManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -20,10 +21,16 @@ import android.view.ViewGroup;
 import android.widget.RemoteViews;
 
 import com.android.volley.Response;
+import com.example.android.bakingtime.database.AppDatabase;
+import com.example.android.bakingtime.models.AppExecutors;
+import com.example.android.bakingtime.models.Ingredient;
 import com.example.android.bakingtime.models.Recipe;
+import com.example.android.bakingtime.models.Step;
+import com.example.android.bakingtime.models.WidgetRecipe;
 import com.example.android.bakingtime.testing.TestActivity;
 import com.example.android.bakingtime.utils.RecipeUtils;
 import com.example.android.bakingtime.utils.VerticalSpaceItemDecoration;
+import com.example.android.bakingtime.widget.RecipeWidgetService;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -128,6 +135,16 @@ public class RecipeListFragment extends NetworkAwareFragment implements RecipeAd
 
                         Gson gson = new GsonBuilder().create();
                         Recipe recipe = gson.fromJson(String.valueOf(recipeData), Recipe.class);
+
+                        for (int ingredientID = 0; ingredientID < recipe.getIngredients().size(); ingredientID++) {
+                            recipe.getIngredients().get(ingredientID).setId(ingredientID);
+                            recipe.getIngredients().get(ingredientID).setRecipeId(recipe.getId());
+                        }
+
+                        for(Step step : recipe.getSteps()) {
+                            step.setRecipeId(recipe.getId());
+                        }
+
                         recipes.add(recipe);
                     }
 
@@ -177,28 +194,47 @@ public class RecipeListFragment extends NetworkAwareFragment implements RecipeAd
             setUpForWidget(currRecipe);
     }
 
-    private void setUpForWidget(Recipe currRecipe) {
-        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(mContext);
+    private void setUpForWidget(final Recipe currRecipe) {
+        AppExecutors.getInstance().diskIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(mContext);
 
-        RemoteViews views = new RemoteViews(mContext.getPackageName(),
-                R.layout.recipe_ingredients_widget);
+                AppDatabase mDb = AppDatabase.getInstance(mContext);
+                WidgetRecipe widgetRecipe = new WidgetRecipe(mAppWidgetId, currRecipe.getId());
 
-        views.setTextViewText(R.id.appwidget_recipe_name_text_view, currRecipe.getName());
-        views.setTextViewText(R.id.appwidget_recipe_ingredients_text_view, RecipeUtils.createRecipeListString(currRecipe.getIngredients()));
+                mDb.widgetRecipeDao().insertWidgetRecipe(widgetRecipe);
+                mDb.recipeDao().insertRecipe(currRecipe);
+                mDb.ingredientDao().insertIngredients(currRecipe.getIngredients());
+                mDb.stepDao().InsertSteps(currRecipe.getSteps());
 
-        Intent intent = new Intent(mContext, RecipeStepsListActivity.class);
-        intent.putExtra(getString(R.string.recipe_key), currRecipe);
+                RemoteViews views = new RemoteViews(mContext.getPackageName(),
+                        R.layout.recipe_ingredients_widget);
 
-        PendingIntent pendingIntent = PendingIntent.getActivity(mContext, mAppWidgetId, intent, 0);
-        views.setOnClickPendingIntent(R.id.appwidget_recipe_container, pendingIntent);
+                views.setTextViewText(R.id.appwidget_recipe_name_text_view, currRecipe.getName());
 
-        appWidgetManager.updateAppWidget(mAppWidgetId, views);
+                Intent intent = new Intent(mContext, RecipeStepsListActivity.class);
+                intent.putExtra(getString(R.string.recipe_key), currRecipe);
 
-        AppCompatActivity currActivity = (AppCompatActivity) mContext;
-        Intent resultValue = new Intent();
-        resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId);
-        currActivity.setResult(RESULT_OK, resultValue);
-        currActivity.finish();
+                PendingIntent pendingIntent = PendingIntent.getActivity(mContext, mAppWidgetId, intent, 0);
+                views.setOnClickPendingIntent(R.id.appwidget_recipe_container, pendingIntent);
+
+                Intent listViewServiceIntent = new Intent(mContext, RecipeWidgetService.class);
+                listViewServiceIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId);
+                listViewServiceIntent.putExtra(mContext.getString(R.string.widget_ingredients_str_list_key), RecipeUtils.createIngredientFormattedList(currRecipe.getIngredients()));
+                listViewServiceIntent.setData(Uri.parse(listViewServiceIntent.toUri(Intent.URI_INTENT_SCHEME)));
+                views.setRemoteAdapter(R.id.appwidget_ingredients_list_view, listViewServiceIntent);
+                views.setEmptyView(R.id.appwidget_ingredients_list_view, R.id.appwidget_empty_view);
+
+                appWidgetManager.updateAppWidget(mAppWidgetId, views);
+
+                AppCompatActivity currActivity = (AppCompatActivity) mContext;
+                Intent resultValue = new Intent();
+                resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId);
+                currActivity.setResult(RESULT_OK, resultValue);
+                currActivity.finish();
+            }
+        });
     }
 
     public void setWidgetSetupMode(boolean widgetSetupMode) {

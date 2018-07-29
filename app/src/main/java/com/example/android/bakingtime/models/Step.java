@@ -1,8 +1,12 @@
 package com.example.android.bakingtime.models;
 
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.Ignore;
+import android.arch.persistence.room.PrimaryKey;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+@Entity(tableName = "step", primaryKeys = {"id", "recipeId"})
 public class Step implements Parcelable {
 
     private int id;
@@ -21,6 +25,7 @@ public class Step implements Parcelable {
         this.recipeId = recipeId;
     }
 
+    @Ignore
     private Step(Parcel in) {
         id = in.readInt();
         shortDescription = in.readString();
